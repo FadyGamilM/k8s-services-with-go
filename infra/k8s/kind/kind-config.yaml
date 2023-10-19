@@ -1,0 +1,5 @@
+# This file only used to open ports from our cluster to the outside world
+
+# => Get the basic environmnet up 
+kind: Cluster 
+apiVersion: kind.x-k8s.io/v1alpha4
