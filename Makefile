@@ -13,3 +13,6 @@ docker-run-postgres:
 
 docker-run-golang-api:
 	docker run -d --name api-golang --network trial-network -e DATABASE_URL=${DATABASE_URL} -p 8080:8080 --restart unless-stopped --link=db golang-api-image:2.0
+
+docker-compose-up:
+	docker-compose up
