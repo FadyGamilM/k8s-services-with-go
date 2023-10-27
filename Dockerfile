@@ -39,7 +39,7 @@ FROM scratch
 # For production environment
 ENV GIN_MODE release
 
-EXPOSE 8080
+EXPOSE 5000
 
 # for security presepective
 COPY --from=build-prod /etc/passwd /etc/passwd

@@ -27,10 +27,11 @@ services:
         # target: /app/
     # depends_on:
     #   - db
-    # environment:
-    #   - DATABASE_URL=postgres://postgres:pswd@db:5432/postgres
+    environment:
+      # - DATABASE_URL=postgres://postgres:pswd@db:5432/postgres
+      - SERVER_PORT=5000
     ports:
-      - 8080:8080
+      - 5000:5000
     networks:
       - backend
     restart: unless-stopped

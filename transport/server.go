@@ -22,6 +22,7 @@ func CreateServer(r *gin.Engine, PORT string) *http.Server {
 func InitServer(srv *http.Server) {
 	if err := srv.ListenAndServe(); err != nil {
 		log.Println("failed initiating the server")
+		log.Println(err)
 		os.Exit(1)
 	} else {
 

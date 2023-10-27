@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"godocker/transport"
 	"log"
+	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 // func init() {
@@ -30,10 +34,16 @@ func main() {
 	router := transport.CreateRouter()
 
 	PORT := os.Getenv("SERVER_PORT")
+	PORT = fmt.Sprint("0.0.0.0:", PORT)
+	log.Println("The PORT is => ", PORT)
 	if PORT == "" {
 		log.Println("⛔ PORT IS NOT PASSED ⛔")
-		PORT = "5000"
+		PORT = "0.0.0.0:5000"
 	}
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "it works !")
+	})
 
 	server := transport.CreateServer(router, PORT)
 	transport.InitServer(server)
