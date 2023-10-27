@@ -1,19 +1,19 @@
 version: '3.9'
 services:
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_PASSWORD: pswd
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - backend
-    restart: unless-stopped
-    ports:
-      - 5432:5432
+  # db:
+  #   image: postgres:14
+  #   environment:
+  #     POSTGRES_PASSWORD: pswd
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   networks:
+  #     - backend
+  #   restart: unless-stopped
+  #   ports:
+  #     - 5432:5432
 
   api-golang:
-    image: golang-api-image:2.0
+    image: golang-api:1.0
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -25,10 +25,10 @@ services:
       - ./:/app/:rw
         # source: ./
         # target: /app/
-    depends_on:
-      - db
-    environment:
-      - DATABASE_URL=postgres://postgres:pswd@db:5432/postgres
+    # depends_on:
+    #   - db
+    # environment:
+    #   - DATABASE_URL=postgres://postgres:pswd@db:5432/postgres
     ports:
       - 8080:8080
     networks:
@@ -39,5 +39,5 @@ networks:
   backend:
     # driver: bridge
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-depl
+spec:
+  selector:
+    matchLabels:
+      app: api-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-pod
+    spec:
+      containers:
+      - name: api-pod
+        image: golang-api:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
