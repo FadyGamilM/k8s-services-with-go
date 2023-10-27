@@ -1,25 +1,51 @@
 package main
 
 import (
+	"godocker/database"
+	"io/ioutil"
 	"log"
 	"os"
-	"os/signal"
-	"syscall"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-// define build for build flag later
-var build = "develop"
+func init() {
+	databaseUrl := os.Getenv("DATABASE_URL")
+	if databaseUrl == "" {
+		content, err := ioutil.ReadFile(os.Getenv("DATABASE_URL_FILE"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		databaseUrl = string(content)
+	}
+
+	errDB := database.InitDB(databaseUrl)
+	if errDB != nil {
+		log.Fatalf("⛔ Unable to connect to database: %v\n", errDB)
+	} else {
+		log.Println("DATABASE CONNECTED 🥇")
+	}
+
+}
 
 func main() {
 
-	log.Printf("go service is starting .. [%v]\n", build)
+	r := gin.Default()
+	var tm time.Time
 
-	defer log.Println("go service is ended !")
+	r.GET("/", func(c *gin.Context) {
+		tm = database.GetTime(c)
+		c.JSON(200, gin.H{
+			"api": "golang",
+			"now": tm,
+		})
+	})
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	// wait for it
-	<-quit
+	r.GET("/ping", func(c *gin.Context) {
+		tm = database.GetTime(c)
+		c.JSON(200, "pong")
+	})
 
-	log.Printf("go service is stopping .. [%v]\n", build)
+	r.Run() // listen and serve on 0.0.0.0:8080 (or "PORT" env var)
 }

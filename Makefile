@@ -1,30 +1,15 @@
-SHELL := /bin/bash
+# i gave my postgres container name = db 
+# then i used @db in the connection string to represent the host of this database or the ip of the host of this database
+DATABASE_URL:=postgres://postgres:pswd@db:5432/postgres
 
-run:
-	go run main.go
 
+# now i set this database url as env variable 
+# ➜ docker-with-golang  $env:DATABASE_URL= "postgres://postgres:pswd@db:5432/postgres"
+# ➜ docker-with-golang  echo $env:DATABASE_URL
+#    postgres://postgres:pswd@db:5432/postgres
 
-build: 
-	go build -ldflags "-X main.build=local"
+docker-run-postgres:
+	docker run -d --name db --network trial-network -e POSTGRES_PASSWORD=pswd -v pgdata:/var/lib/postgresql/data -p 5432:5432 --restart unless-stopped postgres:14
 
-# ==================== For Docker Container ========================
-
-VERSION := 1.0
-
-all: service 
-
-service:
-	docker build -f infra/docker/Dockerfile -t service-amd64:$(VERSION) --build-arg BUILD_REF=$(VERSION) --build-arg BUILD_DATE=$(powershell -Command "Get-Date -UFormat '+%Y-%m-%dT%H:%M:%SZ'") .
-		
-# ==================== For K8s Environment ========================
-
-KIND_CLUSTER := fady-starter-cluster
-
-kind-up: 
-	kind create cluster --image kindest/node:v1.21.1 --name $(KIND_CLUSTER) --config infra/k8s/kind/kind-config.yaml
-kind-down:
-	kind delete cluster --name $(KIND_CLUSTER)
-
-kind-status:
-	kubectl get nodes -o wide 
-	kubectl get svc -o wide 
+docker-run-golang-api:
+	docker run -d --name api-golang --network trial-network -e DATABASE_URL=${DATABASE_URL} -p 8080:8080 --restart unless-stopped --link=db golang-api-image:2.0
