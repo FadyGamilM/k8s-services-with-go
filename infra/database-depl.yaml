@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-depl
+spec:
+  selector:
+    matchLabels:
+      app: pg-pod
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: pg-pod
+    spec:
+      containers:
+      - image: postgres:14
+        name: pg
+        env:
+        # Use secret in real usage
+        - name: POSTGRES_PASSWORD
+          value: password
+        ports:
+        - containerPort: 5432
+          name: pg
